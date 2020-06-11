@@ -8,10 +8,6 @@ pub enum Token {
 }
 
 impl Token {
-    pub fn is_number(&self) -> bool {
-        matches!(self, Token::Number(_))
-    }
-
     pub fn is_op(&self) -> bool {
         matches!(self, Token::Plus | Token::Minus | Token::Mul | Token::Div)
     }

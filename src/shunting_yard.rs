@@ -7,7 +7,12 @@ pub fn shunting_yard(tokens: Vec<Token>) -> Vec<Token> {
     for tok in &tokens {
         if tok.is_op() {
             if let Some(last) = op_stack.last() {
-                if last.prior(tok) {
+                // Minus must be just after its 2 operands
+                if matches!(last, Token::Minus) {
+                    if let Some(top) = op_stack.pop() {
+                        output.push(top);
+                    }
+                } else if last.prior(tok) {
                     // Pop all the op stack into output
                     while let Some(top) = op_stack.pop() {
                         output.push(top);

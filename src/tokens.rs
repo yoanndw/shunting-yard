@@ -16,7 +16,17 @@ impl Token {
         matches!(self, Token::Plus | Token::Minus | Token::Mul | Token::Div)
     }
 
+    pub fn priority(&self) -> usize {
+        use Token::*;
+
+        match self {
+            Plus | Minus => 1,
+            Mul | Div => 2,
+            _ => 0,
+        }
+    }
+
     pub fn prior(&self, other: &Token) -> bool {
-        matches!(self, Token::Mul | Token::Div) && matches!(other, Token::Plus | Token::Minus)
+        self.priority() > other.priority()
     }
 }

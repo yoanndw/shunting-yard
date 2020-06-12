@@ -21,6 +21,7 @@ pub fn shunting_yard(tokens: Vec<Token>) -> Vec<Token> {
         }
     }
 
+    // Pop remaining operators
     while !op_stack.is_empty() {
         output.push(op_stack.pop().unwrap());
     }
@@ -30,7 +31,7 @@ pub fn shunting_yard(tokens: Vec<Token>) -> Vec<Token> {
 
 #[cfg(test)]
 mod test {
-    use super::Token::{self, *};
+    use super::Token::*;
     use super::*;
 
     #[test]

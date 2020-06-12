@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Token {
     Number(i32),
     Plus,
@@ -24,5 +24,15 @@ impl Token {
 
     pub fn prior(&self, other: &Token) -> bool {
         self.priority() > other.priority()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn eq() {
+        assert_eq!(Token::Div, Token::Div);
     }
 }

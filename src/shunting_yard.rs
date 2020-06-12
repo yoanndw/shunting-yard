@@ -32,3 +32,38 @@ pub fn shunting_yard(tokens: Vec<Token>) -> Vec<Token> {
 
     output
 }
+
+#[cfg(test)]
+mod test {
+    use super::Token::{self, *};
+    use super::*;
+
+    #[test]
+    fn addition() {
+        assert_eq!(
+            shunting_yard(vec![Number(1), Plus, Number(2)]),
+            vec![Number(1), Number(2), Plus]
+        );
+    }
+
+    #[test]
+    fn mul_op_precedence() {
+        assert_eq!(
+            shunting_yard(vec![Number(23), Plus, Number(12), Mul, Number(2)]),
+            vec![Number(23), Number(12), Number(2), Mul, Plus]
+        );
+
+        assert_eq!(
+            shunting_yard(vec![Number(1), Mul, Number(2), Minus, Number(1)]),
+            vec![Number(1), Number(2), Mul, Number(1), Minus]
+        );
+    }
+
+    #[test]
+    fn minus_after_two_operands() {
+        assert_eq!(
+            shunting_yard(vec![Number(1), Minus, Number(4), Plus, Number(1)]),
+            vec![Number(1), Number(4), Minus, Number(1), Plus]
+        );
+    }
+}

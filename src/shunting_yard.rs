@@ -61,4 +61,22 @@ mod test {
             vec![Number(1), Number(4), Minus, Number(1), Plus]
         );
     }
+
+    #[test]
+    fn div() {
+        assert_eq!(
+            shunting_yard(vec![Number(21), Div, Number(4)]),
+            vec![Number(21), Number(4), Div]
+        );
+
+        assert_eq!(
+            shunting_yard(vec![Number(1), Div, Number(4), Div, Number(2)]),
+            vec![Number(1), Number(4), Div, Number(2), Div]
+        );
+
+        assert_eq!(
+            shunting_yard(vec![Number(1), Plus, Number(4), Div, Number(2)]),
+            vec![Number(1), Number(4), Number(2), Div, Plus]
+        );
+    }
 }

@@ -23,7 +23,7 @@ impl Token {
     }
 
     pub fn prior(&self, other: &Token) -> bool {
-        self.priority() > other.priority()
+        self.priority() >= other.priority()
     }
 }
 

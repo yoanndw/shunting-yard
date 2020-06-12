@@ -27,17 +27,3 @@ pub fn shunting_yard(tokens: Vec<Token>) -> Vec<Token> {
 
     output
 }
-
-#[cfg(test)]
-mod test {
-    use super::Token::{self, *};
-    use super::*;
-
-    #[test]
-    fn addition() {
-        assert_eq!(
-            shunting_yard(vec![Number(1), Plus, Number(2)]),
-            vec![Number(1), Number(2), Plus]
-        );
-    }
-}

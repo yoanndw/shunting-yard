@@ -100,3 +100,17 @@ mod test {
         assert_eq!(Token::Div, Token::Div);
     }
 }
+
+#[cfg(test)]
+mod tokenizer_test {
+    use super::*;
+
+    #[test]
+    fn sum() {
+        let mut tokenizer = Tokenizer::new("1+2");
+        tokenizer.tokenize();
+        let t = tokenizer.tokens();
+
+        assert_eq!(t, &vec![Token::Number(1), Token::Plus, Token::Number(2)]);
+    }
+}

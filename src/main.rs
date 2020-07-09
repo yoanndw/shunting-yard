@@ -4,14 +4,11 @@ mod tokens;
 
 use rpn::eval_rpn;
 use shunting_yard::shunting_yard;
-use tokens::Token::*;
+use tokens::*;
 
 fn main() {
-    // 1 + 2 * 3 - 4
-    // [Number(1), Number(2), Number(3), Number(4), Minus, Mul, Plus]
-    let input = vec![Number(1), Minus, Number(4), Plus, Number(2), Mul, Number(3)];
-    let output = shunting_yard(input);
+    let tokenizer = Tokenizer::new("1 +  2   * 33");
+    let tokens = tokenizer.tokenize();
 
-    println!("{:?}", output);
-    println!("{}", eval_rpn(output));
+    println!("{:?}", tokens);
 }

@@ -27,81 +27,52 @@ impl Token {
     }
 }
 
-pub struct Tokenizer<'a> {
-    input: &'a str,
-    number_buf: String,
-    on_number: bool,
-    tokens: Vec<Token>,
+fn insert_number(tokens: &mut Vec<Token>, number_buf: &mut String) {
+    let i: i32 = number_buf.parse().unwrap();
+    tokens.push(Token::Number(i));
+
+    number_buf.clear();
 }
 
-impl<'a> Tokenizer<'a> {
-    pub fn new(input: &'a str) -> Self {
-        Self {
-            input,
-            number_buf: String::new(),
-            on_number: false,
-            tokens: Vec::new(),
-        }
-    }
+pub fn tokenize(input: &str) -> Vec<Token> {
+    let mut tokens = Vec::new();
 
-    fn insert_number(&mut self) {
-        let i: i32 = self.number_buf.parse().unwrap();
-        self.tokens.push(Token::Number(i));
+    let mut on_number = false;
+    let mut number_buf = String::new();
+    for c in input.chars() {
+        if c.is_numeric() {
+            // If was not on number => new number => reset buffer
+            if !on_number {
+                number_buf.clear();
+            }
 
-        self.number_buf.clear();
-    }
+            on_number = true;
 
-    pub fn tokenize(&mut self) {
-        for c in self.input.chars() {
-            if c.is_numeric() {
-                // If was not on number => new number => reset buffer
-                if !self.on_number {
-                    self.number_buf.clear();
-                }
+            number_buf.push(c);
+        } else {
+            on_number = false;
 
-                self.on_number = true;
+            // If there is a number in the buffer => insert it
+            if !number_buf.is_empty() {
+                insert_number(&mut tokens, &mut number_buf);
+            }
 
-                self.number_buf.push(c);
-            } else {
-                self.on_number = false;
-
-                // If there is a number in the buffer => insert it
-                if !self.number_buf.is_empty() {
-                    self.insert_number();
-                }
-
-                match c {
-                    '+' => self.tokens.push(Token::Plus),
-                    '-' => self.tokens.push(Token::Minus),
-                    '*' => self.tokens.push(Token::Mul),
-                    '/' => self.tokens.push(Token::Div),
-                    _ => {}
-                }
+            match c {
+                '+' => tokens.push(Token::Plus),
+                '-' => tokens.push(Token::Minus),
+                '*' => tokens.push(Token::Mul),
+                '/' => tokens.push(Token::Div),
+                _ => {}
             }
         }
-
-        // After reached all chars, a self.number_buf might remains
-        if !self.number_buf.is_empty() {
-            self.insert_number();
-        }
     }
 
-    pub fn tokens(&self) -> Vec<Token> {
-        self.tokens.clone()
+    // After reached all chars, a number_buf might remains
+    if !number_buf.is_empty() {
+        insert_number(&mut tokens, &mut number_buf);
     }
 
-    pub fn reset(&mut self) {
-        self.number_buf.clear();
-        self.on_number = false;
-        self.tokens.clear();
-    }
-
-    pub fn tokenize_str(input: &str) -> Vec<Token> {
-        let mut tokenizer = Tokenizer::new(input);
-        tokenizer.tokenize();
-
-        tokenizer.tokens()
-    }
+    tokens
 }
 
 #[cfg(test)]
@@ -121,38 +92,29 @@ mod tokenizer_test {
 
     #[test]
     fn sum() {
-        let t = Tokenizer::tokenize_str("1+2");
+        let t = tokenize("1+2");
 
         assert_eq!(t, vec![Number(1), Plus, Number(2)]);
     }
 
     #[test]
     fn whitespaces() {
-        assert_eq!(
-            Tokenizer::tokenize_str("1 + 2"),
-            vec![Number(1), Plus, Number(2)]
-        );
+        assert_eq!(tokenize("1 + 2"), vec![Number(1), Plus, Number(2)]);
 
-        assert_eq!(
-            Tokenizer::tokenize_str("   2 *    8"),
-            vec![Number(2), Mul, Number(8)]
-        );
+        assert_eq!(tokenize("   2 *    8"), vec![Number(2), Mul, Number(8)]);
     }
 
     #[test]
     fn bigger_number() {
-        assert_eq!(Tokenizer::tokenize_str("125"), vec![Number(125)]);
+        assert_eq!(tokenize("125"), vec![Number(125)]);
 
-        assert_eq!(
-            Tokenizer::tokenize_str("12+56"),
-            vec![Number(12), Plus, Number(56)]
-        );
+        assert_eq!(tokenize("12+56"), vec![Number(12), Plus, Number(56)]);
     }
 
     #[test]
     fn complex_expr() {
         assert_eq!(
-            Tokenizer::tokenize_str("125 + 89  * 897    /8     +5"),
+            tokenize("125 + 89  * 897    /8     +5"),
             vec![
                 Number(125),
                 Plus,

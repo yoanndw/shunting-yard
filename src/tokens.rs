@@ -29,58 +29,65 @@ impl Token {
 
 pub struct Tokenizer<'a> {
     input: &'a str,
+    number_buf: String,
+    on_number: bool,
+    tokens: Vec<Token>,
 }
 
 impl<'a> Tokenizer<'a> {
     pub fn new(input: &'a str) -> Self {
-        Self { input }
+        Self {
+            input,
+            number_buf: String::new(),
+            on_number: false,
+            tokens: Vec::new(),
+        }
     }
 
-    pub fn tokenize(&self) -> Vec<Token> {
-        let mut tokens = Vec::new();
+    fn insert_number(&mut self) {
+        let i: i32 = self.number_buf.parse().unwrap();
+        self.tokens.push(Token::Number(i));
 
-        let mut number = String::new();
-        let mut on_number = false;
+        self.number_buf.clear();
+    }
+
+    pub fn tokenize(&mut self) {
         for c in self.input.chars() {
             if c.is_numeric() {
                 // If was not on number => new number => reset buffer
-                if !on_number {
-                    number.clear();
+                if !self.on_number {
+                    self.number_buf.clear();
                 }
 
-                on_number = true;
+                self.on_number = true;
 
-                number.push(c);
+                self.number_buf.push(c);
             } else {
-                on_number = false;
+                self.on_number = false;
 
                 // If there is a number in the buffer => insert it
-                if !number.is_empty() {
-                    let i: i32 = number.parse().unwrap();
-                    tokens.push(Token::Number(i));
-
-                    number.clear();
+                if !self.number_buf.is_empty() {
+                    self.insert_number();
                 }
 
                 match c {
-                    '+' => tokens.push(Token::Plus),
-                    '-' => tokens.push(Token::Minus),
-                    '*' => tokens.push(Token::Mul),
-                    '/' => tokens.push(Token::Div),
+                    '+' => self.tokens.push(Token::Plus),
+                    '-' => self.tokens.push(Token::Minus),
+                    '*' => self.tokens.push(Token::Mul),
+                    '/' => self.tokens.push(Token::Div),
                     _ => {}
                 }
             }
         }
 
-        // After reached all chars, a number might remains
-        if !number.is_empty() {
-            let i: i32 = number.parse().unwrap();
-            tokens.push(Token::Number(i));
-
-            number.clear();
+        // After reached all chars, a self.number_buf might remains
+        if !self.number_buf.is_empty() {
+            self.insert_number();
         }
+    }
 
-        tokens
+    pub fn tokens(&self) -> &Vec<Token> {
+        &self.tokens
     }
 }
 

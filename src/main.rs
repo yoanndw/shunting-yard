@@ -7,8 +7,9 @@ use shunting_yard::shunting_yard;
 use tokens::*;
 
 fn main() {
-    let tokenizer = Tokenizer::new("1 +  2   * 33");
-    let tokens = tokenizer.tokenize();
+    let mut tokenizer = Tokenizer::new("1 +  2   * 33");
+    tokenizer.tokenize();
+    let tokens = tokenizer.tokens();
 
     println!("{:?}", tokens);
 }

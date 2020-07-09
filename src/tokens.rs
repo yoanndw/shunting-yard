@@ -148,4 +148,22 @@ mod tokenizer_test {
             vec![Number(12), Plus, Number(56)]
         );
     }
+
+    #[test]
+    fn complex_expr() {
+        assert_eq!(
+            Tokenizer::tokenize_str("125 + 89  * 897    /8     +5"),
+            vec![
+                Number(125),
+                Plus,
+                Number(89),
+                Mul,
+                Number(897),
+                Div,
+                Number(8),
+                Plus,
+                Number(5)
+            ]
+        );
+    }
 }

@@ -90,8 +90,14 @@ impl<'a> Tokenizer<'a> {
         self.tokens.clone()
     }
 
+    pub fn reset(&mut self) {
+        self.number_buf.clear();
+        self.on_number = false;
+        self.tokens.clear();
+    }
+
     pub fn tokenize_str(input: &str) -> Vec<Token> {
-        let mut tokenizer = Tokenizer::new("1+2");
+        let mut tokenizer = Tokenizer::new(input);
         tokenizer.tokenize();
 
         tokenizer.tokens()
@@ -110,12 +116,36 @@ mod test {
 
 #[cfg(test)]
 mod tokenizer_test {
+    use super::Token::*;
     use super::*;
 
     #[test]
     fn sum() {
         let t = Tokenizer::tokenize_str("1+2");
 
-        assert_eq!(t, vec![Token::Number(1), Token::Plus, Token::Number(2)]);
+        assert_eq!(t, vec![Number(1), Plus, Number(2)]);
+    }
+
+    #[test]
+    fn whitespaces() {
+        assert_eq!(
+            Tokenizer::tokenize_str("1 + 2"),
+            vec![Number(1), Plus, Number(2)]
+        );
+
+        assert_eq!(
+            Tokenizer::tokenize_str("   2 *    8"),
+            vec![Number(2), Mul, Number(8)]
+        );
+    }
+
+    #[test]
+    fn bigger_number() {
+        assert_eq!(Tokenizer::tokenize_str("125"), vec![Number(125)]);
+
+        assert_eq!(
+            Tokenizer::tokenize_str("12+56"),
+            vec![Number(12), Plus, Number(56)]
+        );
     }
 }

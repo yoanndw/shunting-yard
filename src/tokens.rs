@@ -86,8 +86,15 @@ impl<'a> Tokenizer<'a> {
         }
     }
 
-    pub fn tokens(&self) -> &Vec<Token> {
-        &self.tokens
+    pub fn tokens(&self) -> Vec<Token> {
+        self.tokens.clone()
+    }
+
+    pub fn tokenize_str(input: &str) -> Vec<Token> {
+        let mut tokenizer = Tokenizer::new("1+2");
+        tokenizer.tokenize();
+
+        tokenizer.tokens()
     }
 }
 
@@ -107,10 +114,8 @@ mod tokenizer_test {
 
     #[test]
     fn sum() {
-        let mut tokenizer = Tokenizer::new("1+2");
-        tokenizer.tokenize();
-        let t = tokenizer.tokens();
+        let t = Tokenizer::tokenize_str("1+2");
 
-        assert_eq!(t, &vec![Token::Number(1), Token::Plus, Token::Number(2)]);
+        assert_eq!(t, vec![Token::Number(1), Token::Plus, Token::Number(2)]);
     }
 }

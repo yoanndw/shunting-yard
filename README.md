@@ -5,6 +5,7 @@ Shunting-yard algorithm implementation to parse mathematical expressions.
 
 ## Supported features
 - Operators: addition, subtraction, multiplication, division
+- Other command: `quit`: quit the program
 
 ## Coming soon
 - Parenthesis

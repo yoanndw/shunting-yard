@@ -5,6 +5,8 @@ pub enum Token {
     Minus,
     Mul,
     Div,
+    OpenBrace,
+    CloseBrace,
 }
 
 impl Token {

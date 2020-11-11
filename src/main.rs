@@ -31,12 +31,25 @@ fn read_eval() -> ReplResult {
 }
 
 fn main() {
-    println!("Shunting-yard algorithm v1. By yoannd");
+    /*println!("Shunting-yard algorithm v1. By yoannd");
     loop {
         let result = read_eval();
         match result {
             ReplResult::ExprResult(res) => println!("{}", res),
             ReplResult::Quit => break,
         }
-    }
+    }*/
+
+    let tokens = vec![
+        Token::Number(1),
+        Token::Mul,
+        Token::OpenBrace,
+        Token::Number(2),
+        Token::Plus,
+        Token::Number(3),
+        Token::CloseBrace,
+    ];
+
+    let res = shunting_yard(tokens);
+    println!("{:?}", res);
 }

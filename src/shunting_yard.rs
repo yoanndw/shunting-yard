@@ -16,6 +16,23 @@ pub fn shunting_yard(tokens: Vec<Token>) -> Vec<Token> {
             }
 
             op_stack.push(*tok);
+        } else if *tok == Token::OpenBrace {
+            op_stack.push(*tok);
+        } else if *tok == Token::CloseBrace {
+            // Pop while top != "("
+            // Pop anyway
+            while let Some(popped) = op_stack.pop() {
+                //let popped = op_stack.pop().unwrap();
+
+                // If operator => insert into output
+                if popped != Token::OpenBrace && popped != Token::CloseBrace {
+                    output.push(popped);
+                }
+
+                if popped == Token::OpenBrace {
+                    break;
+                }
+            }
         } else {
             output.push(*tok);
         }
